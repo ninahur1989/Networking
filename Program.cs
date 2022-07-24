@@ -1,2 +1,11 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿namespace Networking 
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            var start = new Starter();
+            start.StartAsync();
+        }
+    }
+}
