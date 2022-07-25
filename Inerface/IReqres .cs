@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Networking.Inerface
 {
-    internal interface IChecker
+    internal interface IReqres
     {
+        public void ProccessRequest();
     }
 }

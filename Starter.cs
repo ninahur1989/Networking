@@ -5,7 +5,7 @@
     using Networking.GRUD;
     using Newtonsoft.Json;
 
-    internal class Starter
+    internal sealed class Starter
     {
         public async void StartAsync()
         {

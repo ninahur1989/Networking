@@ -5,12 +5,13 @@
     using Newtonsoft.Json;
     using System.Text;
 
-    internal class Post : IChecker
+    internal sealed class Post : IReqres
     {
         public async Task PostAsync()
         {
             using var client = new HttpClient();
-            client.BaseAddress = new Uri("https://reqres.in/");
+            UrlGetter urlGetter = new UrlGetter();
+            client.BaseAddress = new Uri(urlGetter.GetUrl());
 
             //8
 
@@ -19,12 +20,13 @@
                 Name = "morpheus",
                 Job = "leader"
             };
+            
 
             string serializedUser = JsonConvert.SerializeObject(userParameters1);
             StringContent stringContent = new StringContent(serializedUser, Encoding.Unicode, "application/json");
 
             HttpResponseMessage result = await client.PostAsync("api/users", stringContent);
-            StatusCheckerAsync(result, "8", "using POST");
+            DisplaySuccessfullResponse(result, "8", "using POST");
 
             //9
 
@@ -38,12 +40,12 @@
             StringContent stringContent2 = new StringContent(serializedUser2, Encoding.Unicode, "application/json");
 
             HttpResponseMessage result2 = await client.PutAsync("api/users/2", stringContent2);
-            StatusCheckerAsync(result2, "9", "using PUT");
+            DisplaySuccessfullResponse(result2, "9", "using PUT");
 
             //10
 
             HttpResponseMessage result3 = await client.PatchAsync("api/users/2", stringContent2);
-            StatusCheckerAsync(result3, "10", "using PATCH");
+            DisplaySuccessfullResponse(result3, "10", "using PATCH");
 
             //11
 
@@ -75,20 +77,20 @@
             await RegisterAsync(userlog2, client, "15", "api/login");
         }
 
-        public async Task StatusCheckerAsync(HttpResponseMessage res, string numOfTask, string message)
+        public async Task DisplaySuccessfullResponse(HttpResponseMessage request, string numOfTask, string message)
         {
-            if (res.IsSuccessStatusCode)
+            if (request.IsSuccessStatusCode)
             {
                 Console.WriteLine("\n" + message);
                 Console.WriteLine($"\n created {numOfTask} TASK ");
-                string content = await res.Content.ReadAsStringAsync();
+                string content = await request.Content.ReadAsStringAsync();
                 Console.WriteLine(content);
 
                 User user = JsonConvert.DeserializeObject<User>(content);
             }
         }
 
-        public async Task RegisterAsync(RegisterUserParameters userlog, HttpClient client, string task, string path)
+        public async Task<Task> RegisterAsync(RegisterUserParameters userlog, HttpClient client, string task, string path)
         {
             string serializedUser3 = JsonConvert.SerializeObject(userlog);
             StringContent stringContent3 = new StringContent(serializedUser3, Encoding.Unicode, "application/json");
@@ -96,7 +98,7 @@
             HttpResponseMessage result5 = await client.PostAsync(path, stringContent3);
             if (result5.IsSuccessStatusCode)
             {
-                Console.WriteLine($"\nTask {task} is successed using POST({path})");
+                Message(task, path, "successful");
                 string content = await result5.Content.ReadAsStringAsync();
 
                 UserToken userToken = JsonConvert.DeserializeObject<UserToken>(content);
@@ -104,8 +106,19 @@
             }
             else
             {
-                Console.WriteLine($"\nTask {task} is unsuccessful using POST({path})");
+                Message(task, path, "unsuccessful");
             }
+            return Task.CompletedTask;
+        }
+
+        public void Message(string task,string path, string result)
+        {
+            Console.WriteLine($"\nTask {task} is {result} using POST({path})");
+        }
+
+        public void ProccessRequest()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace Networking.Models
 {
     using Newtonsoft.Json;
+
     public sealed class RegisterUserParameters
     {
         [JsonProperty("email")]

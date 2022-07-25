@@ -1,7 +1,7 @@
 ﻿namespace Networking
 {
     using Networking.Inerface;
-    public class Get: IChecker
+    public sealed class Get : IReqres
     {
         public async Task StatusCheckerAsync(HttpResponseMessage res, string numOfTask)
         {
@@ -16,7 +16,8 @@
         public async Task GetAsync()
         {
             using var client = new HttpClient();        
-            client.BaseAddress = new Uri("https://reqres.in/");
+            UrlGetter urlGetter = new UrlGetter();
+            client.BaseAddress = new Uri(urlGetter.GetUrl());
 
             //1
 
@@ -64,6 +65,11 @@
             HttpResponseMessage result7 = await client.GetAsync("api/user?delay=3");
 
             StatusCheckerAsync(result7, "7");
+        }
+
+        public void ProccessRequest()
+        {
+            throw new NotImplementedException();
         }
     }
 }
